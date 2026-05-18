@@ -1,323 +1,205 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>딥그린·웜골드·소프트베이지 무드보드</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #F4EDE4 0%, #e8dcc6 100%);
-            padding: 40px 20px;
-            min-height: 100vh;
-        }
-        
-        .mood-board {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            animation: fadeInUp 1s ease-out;
-        }
-        
-        .mood-card {
-            aspect-ratio: 4/5;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px rgba(26, 86, 50, 0.2);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .mood-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(26, 86, 50, 0.3);
-        }
-        
-        .card-1 {
-            background: linear-gradient(145deg, #1A5632 0%, #2d7a4a 50%, #1A5632 100%);
-        }
-        
-        .card-2 {
-            background: linear-gradient(145deg, #D4A017 0%, #f4c430 50%, #D4A017 100%);
-        }
-        
-        .card-3 {
-            background: linear-gradient(145deg, #F4EDE4 0%, #fff8ed 50%, #F4EDE4 100%);
-            border: 2px solid #D4A017;
-        }
-        
-        .card-4 {
-            background: linear-gradient(45deg, #1A5632 0%, #D4A017 50%, #1A5632 100%);
-        }
-        
-        .card-5 {
-            background: radial-gradient(circle at 30% 30%, #D4A017 0%, #1A5632 70%);
-        }
-        
-        .card-6 {
-            background: linear-gradient(135deg, 
-                #1A5632 0%, 
-                #1A5632 33%, 
-                #D4A017 33%, 
-                #D4A017 66%, 
-                #F4EDE4 66%, 
-                #F4EDE4 100%
-            );
-        }
-        
-        .card-content {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .card-1 .card-title, .card-4 .card-title, .card-5 .card-title {
-            color: #F4EDE4;
-        }
-        
-        .card-2 .card-title {
-            color: #1A5632;
-        }
-        
-        .card-3 .card-title, .card-6 .card-title {
-            color: #1A5632;
-        }
-        
-        .card-subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-            line-height: 1.6;
-            font-weight: 400;
-        }
-        
-        .card-1 .card-subtitle, .card-4 .card-subtitle, .card-5 .card-subtitle {
-            color: #F4EDE4;
-        }
-        
-        .card-2 .card-subtitle {
-            color: #1A5632;
-        }
-        
-        .card-3 .card-subtitle, .card-6 .card-subtitle {
-            color: #1A5632;
-        }
-        
-        .geometric-element {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .card-1 .geometric-element {
-            width: 120px;
-            height: 120px;
-            background: #D4A017;
-            top: -60px;
-            right: -60px;
-        }
-        
-        .card-2 .geometric-element {
-            width: 80px;
-            height: 80px;
-            background: #1A5632;
-            bottom: -40px;
-            left: -40px;
-            animation-delay: -2s;
-        }
-        
-        .card-3 .geometric-element {
-            width: 100px;
-            height: 100px;
-            background: #D4A017;
-            top: -50px;
-            left: -50px;
-            animation-delay: -4s;
-        }
-        
-        .card-4 .geometric-element {
-            width: 150px;
-            height: 150px;
-            background: #F4EDE4;
-            bottom: -75px;
-            right: -75px;
-            animation-delay: -1s;
-        }
-        
-        .card-5 .geometric-element {
-            width: 90px;
-            height: 90px;
-            background: #F4EDE4;
-            top: 20px;
-            left: 20px;
-            animation-delay: -3s;
-        }
-        
-        .card-6 .geometric-element {
-            width: 110px;
-            height: 110px;
-            background: rgba(212, 160, 23, 0.2);
-            bottom: -55px;
-            left: -55px;
-            animation-delay: -5s;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-            color: #1A5632;
-        }
-        
-        .header h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #1A5632, #D4A017);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .header p {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .mood-board {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .header p {
-                font-size: 1rem;
-            }
-            
-            .card-title {
-                font-size: 1.4rem;
-            }
-            
-            .card-subtitle {
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .mood-board {
-                grid-template-columns: 1fr;
-                gap: 18px;
-            }
-            
-            body {
-                padding: 30px 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Color Mood Board</h1>
-        <p>딥그린, 웜골드, 소프트베이지가 만들어내는<br>자연스럽고 프리미엄한 조화</p>
+import { useEffect, useState } from 'react';
+
+export default function DailyPlannerApp() {
+  const [schedule, setSchedule] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [userInput, setUserInput] = useState('오늘은 수진이 책 받으러 목동 가기, 교회 기도 1시간 포함');
+
+  const today = new Date();
+  const formattedDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+
+  const generateSchedule = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/generateSchedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt: userInput
+        })
+      });
+
+      const data = await response.json();
+      setSchedule(data.schedule);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    generateSchedule();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white p-6">
+      <div className="max-w-5xl mx-auto">
+
+        <div className="bg-white rounded-3xl shadow-xl p-8 border border-pink-100 mb-6">
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+            🌸 AI 지아님 하루 플래너
+          </h1>
+
+          <p className="text-gray-500 text-lg mb-6">
+            {formattedDate}
+          </p>
+
+          <div className="grid md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-pink-50 rounded-2xl p-4">
+              <h3 className="font-bold text-pink-700 mb-2">오늘의 핵심</h3>
+              <p className="text-sm text-gray-700">
+                기도와 균형을 유지하는 하루
+              </p>
+            </div>
+
+            <div className="bg-yellow-50 rounded-2xl p-4">
+              <h3 className="font-bold text-yellow-700 mb-2">AI 추천</h3>
+              <p className="text-sm text-gray-700">
+                체력 안배 중심 스케줄
+              </p>
+            </div>
+
+            <div className="bg-green-50 rounded-2xl p-4">
+              <h3 className="font-bold text-green-700 mb-2">오늘의 말씀</h3>
+              <p className="text-sm text-gray-700">
+                새 힘을 주시는 하나님
+              </p>
+            </div>
+
+            <div className="bg-blue-50 rounded-2xl p-4">
+              <h3 className="font-bold text-blue-700 mb-2">오늘의 에너지</h3>
+              <p className="text-sm text-gray-700">
+                무리하지 않는 집중 루틴
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <textarea
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="오늘 해야할 일 입력하기"
+              className="w-full h-28 rounded-2xl border border-gray-200 p-4 focus:outline-none focus:ring-2 focus:ring-pink-300"
+            />
+
+            <button
+              onClick={generateSchedule}
+              className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-md transition-all"
+            >
+              ✨ AI 타임테이블 생성하기
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {loading ? (
+            <div className="bg-white rounded-3xl p-10 text-center shadow-lg text-xl font-semibold">
+              AI가 지아님 하루를 계획하는 중입니다 ✨
+            </div>
+          ) : (
+            schedule.map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl shadow-md p-5 flex flex-col md:flex-row gap-4 hover:scale-[1.01] transition-all"
+              >
+                <div className="md:w-1/4">
+                  <div className="text-pink-600 font-bold text-lg">
+                    {item.time}
+                  </div>
+                </div>
+
+                <div className="md:w-3/4">
+                  <h2 className="text-xl font-semibold text-gray-800 mb-1">
+                    {item.title}
+                  </h2>
+                  <p className="text-gray-600">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="mt-8 bg-white rounded-3xl shadow-lg p-6 border border-pink-100">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            ✅ 하루 체크리스트
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <label className="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
+              <input type="checkbox" className="w-5 h-5" />
+              <span>기도시간 채우기</span>
+            </label>
+
+            <label className="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
+              <input type="checkbox" className="w-5 h-5" />
+              <span>운동 완료</span>
+            </label>
+
+            <label className="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
+              <input type="checkbox" className="w-5 h-5" />
+              <span>말씀 묵상하기</span>
+            </label>
+
+            <label className="flex items-center gap-3 bg-gray-50 rounded-xl p-4">
+              <input type="checkbox" className="w-5 h-5" />
+              <span>감사 3가지 기록</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="mt-8 bg-gray-900 text-white rounded-3xl p-6 shadow-xl">
+          <h2 className="text-2xl font-bold mb-4">
+            🤖 OpenAI API 서버 코드 예시
+          </h2>
+
+          <pre className="overflow-x-auto text-sm whitespace-pre-wrap">
+{`// pages/api/generateSchedule.js
+
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export default async function handler(req, res) {
+  const { prompt } = req.body;
+
+  const completion = await client.chat.completions.create({
+    model: 'gpt-5.5',
+    messages: [
+      {
+        role: 'system',
+        content: '사용자의 하루를 균형있고 건강하게 계획하는 라이프 코치 AI입니다.'
+      },
+      {
+        role: 'user',
+        content: prompt
+      }
+    ]
+  });
+
+  const text = completion.choices[0].message.content;
+
+  const schedule = [
+    {
+      time: '08:00 ~ 09:00',
+      title: 'AI 추천 일정',
+      desc: text
+    }
+  ];
+
+  res.status(200).json({ schedule });
+}
+`}
+          </pre>
+        </div>
+      </div>
     </div>
-    
-    <div class="mood-board">
-        <div class="mood-card card-1">
-            <div class="card-content">
-                <div class="geometric-element"></div>
-                <h3 class="card-title">딥그린</h3>
-                <p class="card-subtitle">#1A5632<br><br>안정감과 자연의 깊이<br>신뢰할 수 있는 지속성</p>
-            </div>
-        </div>
-        
-        <div class="mood-card card-2">
-            <div class="card-content">
-                <div class="geometric-element"></div>
-                <h3 class="card-title">웜골드</h3>
-                <p class="card-subtitle">#D4A017<br><br>따뜻한 프리미엄<br>빛나는 럭셔리함</p>
-            </div>
-        </div>
-        
-        <div class="mood-card card-3">
-            <div class="card-content">
-                <div class="geometric-element"></div>
-                <h3 class="card-title">소프트베이지</h3>
-                <p class="card-subtitle">#F4EDE4<br><br>휴식의 여백<br>친근한 포근함</p>
-            </div>
-        </div>
-        
-        <div class="mood-card card-4">
-            <div class="card-content">
-                <div class="geometric-element"></div>
-                <h3 class="card-title">그라데이션</h3>
-                <p class="card-subtitle">딥그린에서 웜골드로<br>자연스러운 전환<br>역동적인 에너지</p>
-            </div>
-        </div>
-        
-        <div class="mood-card card-5">
-            <div class="card-content">
-                <div class="geometric-element"></div>
-                <h3 class="card-title">래디얼</h3>
-                <p class="card-subtitle">중심에서 퍼져나가는<br>따뜻한 빛의 확산<br>집중과 확장</p>
-            </div>
-        </div>
-        
-        <div class="mood-card card-6">
-            <div class="card-content">
-                <div class="geometric-element"></div>
-                <h3 class="card-title">컬러 블록</h3>
-                <p class="card-subtitle">3가지 색상의 완벽한<br>밸런스와 조화<br>모던한 구성미</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+  );
+}
