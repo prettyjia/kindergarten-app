@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚾ 마법 숫자야구</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap');
+
+  :root {
+    --pink-light: #ffe4f0;
+    --pink-mid: #ff7eb3;
+    --pink-main: #e8449a;
+    --pink-dark: #b5206e;
+    --purple-light: #f0e4ff;
+    --purple-mid: #c084f5;
+    --purple-main: #9333ea;
+    --purple-dark: #6b21a8;
+    --star-gold: #ffd700;
+    --cream: #fff9fc;
+    --text-dark: #3d0a2e;
+    --text-mid: #7c2d6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nanum Gothic', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #ffe4f7 0%, #f3d9ff 40%, #fce4ff 70%, #ffe4ef 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* 배경 별 장식 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(2px 2px at 10% 20%, #ff7eb366 0%, transparent 100%),
+      radial-gradient(3px 3px at 80% 10%, #c084f566 0%, transparent 100%),
+      radial-gradient(2px 2px at 60% 80%, #ff7eb366 0%, transparent 100%),
+      radial-gradient(3px 3px at 30% 70%, #c084f566 0%, transparent 100%),
+      radial-gradient(2px 2px at 90% 50%, #ff7eb344 0%, transparent 100%),
+      radial-gradient(2px 2px at 15% 90%, #c084f544 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  /* 제목 */
+  .title-area {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .magic-icon {
+    font-size: 44px;
+    display: block;
+    margin-bottom: 4px;
+    filter: drop-shadow(0 0 6px #ff7eb3aa);
+    animation: sparkle 2s ease-in-out infinite;
+  }
+
+  @keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 6px #ff7eb3aa); }
+    50% { transform: scale(1.08) rotate(3deg); filter: drop-shadow(0 0 12px #c084f5cc); }
+  }
+
+  .title-area h1 {
+    font-family: 'Jua', sans-serif;
+    font-size: 30px;
+    color: var(--pink-dark);
+    text-shadow: 2px 2px 0 #fff, 0 0 12px #ff7eb366;
+    letter-spacing: 1px;
+  }
+
+  .title-area .subtitle {
+    font-size: 13px;
+    color: var(--text-mid);
+    margin-top: 4px;
+  }
+
+  /* 메인 카드 */
+  .card {
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 28px;
+    border: 2px solid rgba(255,126,179,0.35);
+    box-shadow: 0 8px 32px rgba(233,68,154,0.12), 0 2px 8px rgba(192,132,245,0.1);
+    padding: 24px 20px 20px;
+  }
+
+  /* 입력 표시창 */
+  .display-box {
+    background: linear-gradient(135deg, #fff0fa 0%, #f5e8ff 100%);
+    border: 2px solid rgba(233,68,154,0.25);
+    border-radius: 18px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .display-label {
+    font-size: 11px;
+    color: var(--text-mid);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .display-digits {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .digit-slot {
+    width: 52px;
+    height: 60px;
+    background: white;
+    border: 2px solid rgba(233,68,154,0.3);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Jua', sans-serif;
+    font-size: 32px;
+    color: var(--pink-dark);
+    transition: all 0.2s;
+    box-shadow: inset 0 2px 6px rgba(233,68,154,0.08);
+  }
+
+  .digit-slot.filled {
+    border-color: var(--pink-main);
+    background: linear-gradient(135deg, #fff0f8, #fce4ff);
+    box-shadow: 0 0 0 3px rgba(233,68,154,0.15);
+  }
+
+  /* 숫자 버튼 패드 */
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .num-btn {
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Jua', sans-serif;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #fff0fa, #f5e8ff);
+    color: var(--purple-dark);
+    box-shadow: 0 3px 8px rgba(233,68,154,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+    border: 1.5px solid rgba(192,132,245,0.3);
+  }
+
+  .num-btn:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.04);
+    background: linear-gradient(145deg, #ffe4f5, #f0d9ff);
+    box-shadow: 0 6px 14px rgba(233,68,154,0.2);
+    border-color: var(--pink-mid);
+  }
+
+  .num-btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.97);
+    box-shadow: 0 1px 4px rgba(233,68,154,0.15);
+  }
+
+  .num-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .num-btn.selected {
+    background: linear-gradient(145deg, #ff7eb3, #c084f5);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(233,68,154,0.35);
+  }
+
+  /* 액션 버튼들 */
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .btn-back {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(192,132,245,0.4);
+    background: rgba(240,228,255,0.6);
+    color: var(--purple-dark);
+    font-family: 'Jua', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-back:hover { background: #e9d5ff; transform: translateY(-1px); }
+
+  .btn-confirm {
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--pink-main), var(--purple-main));
+    color: white;
+    font-family: 'Jua', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 4px 12px rgba(233,68,154,0.3);
+  }
+
+  .btn-confirm:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(233,68,154,0.4); }
+  .btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* 결과 메시지 */
+  .result-box {
+    min-height: 44px;
+    text-align: center;
+    font-family: 'Jua', sans-serif;
+    font-size: 20px;
+    color: var(--pink-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    padding: 8px;
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+
+  .result-box.win {
+    background: linear-gradient(135deg, #ffe4f5, #f0d9ff);
+    border: 2px solid var(--pink-mid);
+    animation: winPulse 0.6s ease;
+  }
+
+  @keyframes winPulse {
+    0% { transform: scale(0.95); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+
+  /* 시도 횟수 */
+  .count-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(255,240,250,0.7);
+    border-radius: 12px;
+    margin-bottom: 14px;
+  }
+
+  .count-label { font-size: 13px; color: var(--text-mid); }
+  .count-value { font-family: 'Jua', sans-serif; font-size: 18px; color: var(--pink-dark); }
+
+  /* 구분선 */
+  .divider {
+    border: none;
+    border-top: 1.5px dashed rgba(233,68,154,0.2);
+    margin: 14px 0;
+  }
+
+  /* 기록 */
+  .history-wrap {
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 2px;
+  }
+
+  .history-wrap::-webkit-scrollbar { width: 4px; }
+  .history-wrap::-webkit-scrollbar-thumb { background: rgba(233,68,154,0.25); border-radius: 4px; }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 12px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 10px;
+    border: 1px solid rgba(233,68,154,0.12);
+    animation: slideIn 0.25s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .history-num {
+    font-family: 'Jua', sans-serif;
+    font-size: 15px;
+    color: var(--text-dark);
+    letter-spacing: 3px;
+  }
+
+  .history-result {
+    font-size: 13px;
+    color: var(--text-mid);
+    background: rgba(255,240,250,0.8);
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid rgba(233,68,154,0.2);
+  }
+
+  .history-idx {
+    font-size: 11px;
+    color: rgba(124,45,107,0.4);
+    min-width: 20px;
+  }
+
+  /* 새 게임 버튼 */
+  .btn-reset {
+    width: 100%;
+    padding: 13px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #ff7eb3, #c084f5);
+    color: white;
+    font-family: 'Jua', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(233,68,154,0.25);
+    letter-spacing: 1px;
+  }
+
+  .btn-reset:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233,68,154,0.38); }
+
+  /* 규칙 토글 */
+  .rule-toggle {
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  .rule-toggle button {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: var(--text-mid);
+    cursor: pointer;
+    text-decoration: underline dotted;
+  }
+
+  .rule-box {
+    display: none;
+    background: rgba(255,240,250,0.7);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    text-align: left;
+    border: 1px solid rgba(233,68,154,0.15);
+  }
+
+  .rule-box.open { display: block; }
+
+  /* 빈 기록 안내 */
+  .no-history {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(124,45,107,0.4);
+    padding: 12px 0;
+  }
+
+  /* 별 파티클 */
+  .star-particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 18px;
+    animation: floatStar 1.2s ease-out forwards;
+    z-index: 999;
+  }
+
+  @keyframes floatStar {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(0.4); }
+  }
+
+  @media (max-width: 400px) {
+    .title-area h1 { font-size: 24px; }
+    .digit-slot { width: 44px; height: 52px; font-size: 26px; }
+    .num-btn { font-size: 17px; }
+    .card { padding: 18px 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="title-area">
+    <span class="magic-icon">🪄</span>
+    <h1>마법 숫자야구</h1>
+    <p class="subtitle">✨ 서로 다른 세 숫자를 맞춰보세요 ✨</p>
+  </div>
+
+  <div class="card">
+
+    <!-- 입력 표시 -->
+    <div class="display-box">
+      <div class="display-label">입력 중</div>
+      <div class="display-digits">
+        <div class="digit-slot" id="slot0">_</div>
+        <div class="digit-slot" id="slot1">_</div>
+        <div class="digit-slot" id="slot2">_</div>
+      </div>
+    </div>
+
+    <!-- 숫자 버튼 패드 -->
+    <div class="numpad" id="numpad">
+      <!-- 0~9 버튼 생성 (JS) -->
+    </div>
+
+    <!-- 지우기 / 확인 -->
+    <div class="action-row">
+      <button class="btn-back" onclick="deleteDigit()">← 지우기</button>
+      <button class="btn-confirm" id="confirmBtn" onclick="checkGuess()" disabled>✨ 확인!</button>
+    </div>
+
+    <!-- 결과 -->
+    <div class="result-box" id="result"></div>
+
+    <!-- 시도 횟수 -->
+    <div class="count-row">
+      <span class="count-label">🎯 시도 횟수</span>
+      <span class="count-value" id="count">0번</span>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 기록 -->
+    <div class="history-wrap" id="history">
+      <div class="no-history" id="noHistory">아직 시도가 없어요 💫</div>
+    </div>
+
+    <!-- 새 게임 -->
+    <button class="btn-reset" onclick="resetGame()">🌟 새로운 마법 시작!</button>
+
+    <!-- 규칙 -->
+    <div class="rule-toggle">
+      <button onclick="toggleRule()">게임 방법은? 🔍</button>
+      <div class="rule-box" id="ruleBox">
+        🔢 컴퓨터가 서로 다른 세 자리 숫자를 정해요.<br>
+        ⚾ <b>스트라이크</b>: 숫자와 위치가 모두 맞음<br>
+        🟡 <b>볼</b>: 숫자는 맞지만 위치가 다름<br>
+        ❌ <b>아웃</b>: 하나도 해당 없음<br>
+        3스트라이크가 되면 성공! ✨
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let answer = [];
+let current = [];
+let count = 0;
+let gameOver = false;
+
+init();
+
+function init() {
+  buildNumpad();
+  createAnswer();
+}
+
+function buildNumpad() {
+  const pad = document.getElementById('numpad');
+  pad.innerHTML = '';
+  for (let i = 0; i <= 9; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.textContent = i;
+    btn.id = 'nBtn' + i;
+    btn.onclick = () => pressDigit(i);
+    pad.appendChild(btn);
+  }
+}
+
+function createAnswer() {
+  answer = [];
+  while (answer.length < 3) {
+    const n = Math.floor(Math.random() * 10);
+    if (!answer.includes(n)) answer.push(n);
+  }
+  // console.log('정답:', answer); // 개발용
+}
+
+function pressDigit(n) {
+  if (gameOver) return;
+  if (current.length >= 3) return;
+  if (current.includes(n)) {
+    shakeSlot();
+    return;
+  }
+  current.push(n);
+  updateDisplay();
+  spawnStar();
+}
+
+function deleteDigit() {
+  if (gameOver) return;
+  if (current.length === 0) return;
+  const removed = current.pop();
+  document.getElementById('nBtn' + removed).classList.remove('selected');
+  updateDisplay();
+}
+
+function updateDisplay() {
+  for (let i = 0; i < 3; i++) {
+    const slot = document.getElementById('slot' + i);
+    if (i < current.length) {
+      slot.textContent = current[i];
+      slot.classList.add('filled');
+    } else {
+      slot.textContent = '_';
+      slot.classList.remove('filled');
+    }
+  }
+  current.forEach(n => {
+    document.getElementById('nBtn' + n).classList.add('selected');
+    document.getElementById('nBtn' + n).disabled = true;
+  });
+  for (let i = 0; i <= 9; i++) {
+    if (!current.includes(i)) {
+      document.getElementById('nBtn' + i).classList.remove('selected');
+      document.getElementById('nBtn' + i).disabled = false;
+    }
+  }
+  document.getElementById('confirmBtn').disabled = current.length !== 3;
+}
+
+function checkGuess() {
+  if (current.length !== 3 || gameOver) return;
+
+  count++;
+  document.getElementById('count').textContent = count + '번';
+
+  let strike = 0, ball = 0;
+  for (let i = 0; i < 3; i++) {
+    if (current[i] === answer[i]) strike++;
+    else if (answer.includes(current[i])) ball++;
+  }
+
+  const numStr = current.join('');
+  let resultText = '';
+
+  if (strike === 0 && ball === 0) {
+    resultText = '❌ 아웃! 하나도 없어요';
+  } else {
+    resultText = `⚾ ${strike}스트라이크 ${ball}볼`;
+  }
+
+  const resultBox = document.getElementById('result');
+
+  if (strike === 3) {
+    resultBox.innerHTML = `🎉 정답! ${count}번 만에 성공!`;
+    resultBox.classList.add('win');
+    gameOver = true;
+    disableAll();
+    for (let i = 0; i < 8; i++) setTimeout(() => spawnStar(true), i * 120);
+  } else {
+    resultBox.textContent = resultText;
+    resultBox.classList.remove('win');
+  }
+
+  addHistory(numStr, resultText);
+  clearInput();
+}
+
+function clearInput() {
+  current = [];
+  for (let i = 0; i <= 9; i++) {
+    const btn = document.getElementById('nBtn' + i);
+    btn.classList.remove('selected');
+    btn.disabled = false;
+  }
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('slot' + i).textContent = '_';
+    document.getElementById('slot' + i).classList.remove('filled');
+  }
+  document.getElementById('confirmBtn').disabled = true;
+}
+
+function addHistory(numStr, resultText) {
+  const wrap = document.getElementById('history');
+  const noH = document.getElementById('noHistory');
+  if (noH) noH.remove();
+
+  const item = document.createElement('div');
+  item.className = 'history-item';
+  item.innerHTML = `
+    <span class="history-idx">${count}</span>
+    <span class="history-num">${numStr.split('').join(' · ')}</span>
+    <span class="history-result">${resultText}</span>
+  `;
+  wrap.prepend(item);
+}
+
+function disableAll() {
+  for (let i = 0; i <= 9; i++) {
+    document.getElementById('nBtn' + i).disabled = true;
+  }
+  document.getElementById('confirmBtn').disabled = true;
+}
+
+function resetGame() {
+  count = 0;
+  current = [];
+  gameOver = false;
+  document.getElementById('count').textContent = '0번';
+  document.getElementById('result').textContent = '';
+  document.getElementById('result').classList.remove('win');
+  document.getElementById('history').innerHTML = '<div class="no-history" id="noHistory">아직 시도가 없어요 💫</div>';
+  clearInput();
+  createAnswer();
+}
+
+function toggleRule() {
+  const box = document.getElementById('ruleBox');
+  box.classList.toggle('open');
+}
+
+function shakeSlot() {
+  const slots = document.querySelectorAll('.digit-slot');
+  slots.forEach(s => {
+    s.style.animation = 'none';
+    s.getBoundingClientRect();
+    s.style.animation = 'shake 0.3s ease';
+  });
+}
+
+function spawnStar(multi = false) {
+  const emojis = ['⭐', '✨', '💫', '🌟', '⚡'];
+  const el = document.createElement('div');
+  el.className = 'star-particle';
+  el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  const x = multi
+    ? Math.random() * window.innerWidth
+    : Math.random() * 320 + (window.innerWidth / 2 - 160);
+  el.style.left = x + 'px';
+  el.style.top = (window.innerHeight * 0.5 + Math.random() * 80) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+// 슬롯 흔들림 키프레임 동적 추가
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
